@@ -3198,8 +3198,8 @@ describe("card metadata", () => {
     expect(screen.queryByText("3h")).toBeNull();
   });
 
-  it("pairs live status labels with a braille spinner, idle rows with none", async () => {
-    render([
+  it("pairs live status labels with a dot spinner, idle rows with none", async () => {
+    const view = render([
       thread({
         id: "thr_run",
         indicator: "runtime",
@@ -3208,10 +3208,11 @@ describe("card metadata", () => {
       thread({ id: "thr_idle", indicator: "none" }),
     ]);
     expect(await screen.findByLabelText("Agent is working")).toBeDefined();
-    // The spinner starts on the first braille frame; the label keeps its
-    // exact text beside it.
-    expect(screen.getByText("⠋")).toBeDefined();
+    // The spinner sits beside the label, which keeps its exact text.
     expect(screen.getByText("Working")).toBeDefined();
+    expect(
+      view.container.querySelectorAll("[data-dot-spinner]"),
+    ).toHaveLength(1);
   });
 
   // An indicator this plugin does not know must fall through to the age label
