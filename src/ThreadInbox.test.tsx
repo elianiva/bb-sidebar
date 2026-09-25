@@ -3198,6 +3198,22 @@ describe("card metadata", () => {
     expect(screen.queryByText("3h")).toBeNull();
   });
 
+  it("pairs live status labels with a braille spinner, idle rows with none", async () => {
+    render([
+      thread({
+        id: "thr_run",
+        indicator: "runtime",
+        indicatorLabel: "Agent is working",
+      }),
+      thread({ id: "thr_idle", indicator: "none" }),
+    ]);
+    expect(await screen.findByLabelText("Agent is working")).toBeDefined();
+    // The spinner starts on the first braille frame; the label keeps its
+    // exact text beside it.
+    expect(screen.getByText("⠋")).toBeDefined();
+    expect(screen.getByText("Working")).toBeDefined();
+  });
+
   // An indicator this plugin does not know must fall through to the age label
   // rather than leave the slot blank.
   it("keeps the age label for an unrecognized indicator", async () => {

@@ -3,6 +3,7 @@ import type {
   PluginSidebarThreadIndicator,
 } from "@get-bb/plugin-sdk/app";
 import { cn } from "./lib/utils";
+import { BrailleSpinner } from "./BrailleSpinner";
 import { relativeTimeLabel } from "./relative-time";
 
 /**
@@ -40,15 +41,23 @@ export function StatusOrTime({
   const status = shortStatus(thread.indicator);
   if (status !== null) {
     return (
-      <span
-        aria-label={thread.indicatorLabel ?? status.label}
-        className={cn(
-          "max-w-full truncate text-2xs font-medium",
-          status.className,
-        )}
-      >
-        {status.label}
-      </span>
+      // A fragment: the parents lay the slot out with flex, and the label
+      // span stays exactly the label text so exact-text lookups keep
+      // matching. The spinner is aria-hidden; the label owns the name.
+      <>
+        {status.animated ? (
+          <BrailleSpinner className="mr-1 text-2xs" />
+        ) : null}
+        <span
+          aria-label={thread.indicatorLabel ?? status.label}
+          className={cn(
+            "max-w-full truncate text-2xs font-medium",
+            status.className,
+          )}
+        >
+          {status.label}
+        </span>
+      </>
     );
   }
   return (
@@ -61,30 +70,76 @@ export function StatusOrTime({
 function shortStatus(indicator: PluginSidebarThreadIndicator): {
   label: string;
   className: string;
+  /** Live work gets the braille spinner beside its label. */
+  animated: boolean;
 } | null {
   switch (indicator) {
     case "unread-error":
-      return { label: "Failed", className: statusToneClass(indicator) };
+      return {
+        label: "Failed",
+        className: statusToneClass(indicator),
+        animated: false,
+      };
     case "waiting-for-input":
-      return { label: "Needs you", className: statusToneClass(indicator) };
+      return {
+        label: "Needs you",
+        className: statusToneClass(indicator),
+        animated: false,
+      };
     case "unread-success":
-      return { label: "Unread", className: statusToneClass(indicator) };
+      return {
+        label: "Unread",
+        className: statusToneClass(indicator),
+        animated: false,
+      };
     case "runtime":
-      return { label: "Working", className: statusToneClass(indicator) };
+      return {
+        label: "Working",
+        className: statusToneClass(indicator),
+        animated: true,
+      };
     case "workflow":
-      return { label: "Workflow", className: statusToneClass(indicator) };
+      return {
+        label: "Workflow",
+        className: statusToneClass(indicator),
+        animated: true,
+      };
     case "background-agent":
-      return { label: "Agent", className: statusToneClass(indicator) };
+      return {
+        label: "Agent",
+        className: statusToneClass(indicator),
+        animated: true,
+      };
     case "background-command":
-      return { label: "Command", className: statusToneClass(indicator) };
+      return {
+        label: "Command",
+        className: statusToneClass(indicator),
+        animated: true,
+      };
     case "plan-mode":
-      return { label: "Planning", className: statusToneClass(indicator) };
+      return {
+        label: "Planning",
+        className: statusToneClass(indicator),
+        animated: true,
+      };
     case "goal":
-      return { label: "Goal", className: statusToneClass(indicator) };
+      return {
+        label: "Goal",
+        className: statusToneClass(indicator),
+        animated: true,
+      };
     case "draft":
-      return { label: "Draft", className: statusToneClass(indicator) };
+      return {
+        label: "Draft",
+        className: statusToneClass(indicator),
+        animated: false,
+      };
     case "working-draft":
-      return { label: "Drafting", className: statusToneClass(indicator) };
+      return {
+        label: "Drafting",
+        className: statusToneClass(indicator),
+        animated: false,
+      };
     case "none":
       return null;
     default:
