@@ -200,6 +200,7 @@ function SearchResultRow({
         <span
           className={cn(
             STATUS_SLOT_CLASS,
+            "w-auto",
             isWoke &&
               "justify-end text-2xs font-medium text-amber-700 dark:text-amber-300",
           )}

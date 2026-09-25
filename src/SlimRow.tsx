@@ -141,19 +141,20 @@ export function SlimRow({
               )}
             />
           </span>
-          {/* The same slot as a card, so a shelf keeps the card's column. A
-              snoozed row spends it on the wake time: when the thread comes
-              BACK is that shelf's whole question, and it outranks an age the
-              user has already decided to ignore.
+          {/* The slot sizes to its content so the title fills the row: a
+              fixed slot would reserve dead space before a short age and cut
+              the title off early. A snoozed row spends it on the wake time:
+              when the thread comes BACK is that shelf's whole question, and
+              it outranks an age the user has already decided to ignore.
 
               The restore button shares this one cell instead of following it.
               A button of its own would sit between the age and the row's edge
-              and push the whole column off the card's, which is the one thing
-              the fixed slot exists to prevent. */}
+              and shift the age under hover, which is the one thing sharing
+              the cell exists to prevent. */}
           <span
             className={cn(
               STATUS_SLOT_CLASS,
-              "pointer-events-none relative tabular-nums text-2xs text-muted-foreground/60",
+              "w-auto pointer-events-none relative tabular-nums text-2xs text-muted-foreground/60",
             )}
           >
             <span className="flex items-center transition-opacity duration-150 ease-out group-hover/slim:opacity-0 motion-reduce:transition-none">
