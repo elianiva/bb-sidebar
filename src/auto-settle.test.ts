@@ -173,4 +173,33 @@ describe("automatic settle policy", () => {
       }),
     ).toBe("keep");
   });
+
+  it("never settles live work: busy statuses stay, idle settles", () => {
+    for (const status of [
+      "active",
+      "pending",
+      "starting",
+      "stopping",
+    ] as const) {
+      expect(
+        decideAutoSettle({
+          lifecycle: null,
+          now: NOW,
+          pullRequest: { outcome: "absent" },
+          settings,
+          thread: { ...quietThread, status },
+        }),
+      ).toBe("keep");
+      // A settled-then-busy thread returns to the inbox.
+      expect(
+        decideAutoSettle({
+          lifecycle: lifecycle({ settledAt: NOW - DAY }),
+          now: NOW,
+          pullRequest: { outcome: "absent" },
+          settings,
+          thread: { ...quietThread, status },
+        }),
+      ).toBe("unsettle");
+    }
+  });
 });

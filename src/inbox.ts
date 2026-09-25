@@ -83,11 +83,17 @@ export function filterByProject(
   return threads.filter((thread) => thread.projectId === projectId);
 }
 
-/** Archived threads never belong in the inbox. */
+/**
+ * Archived threads never belong in the inbox. Hidden threads neither: bb
+ * keeps plugin-spawned helper threads (`visibility: "hidden"`) out of its
+ * own list, and the array carries them only for lists that want them.
+ */
 export function visibleInboxThreads(
   threads: readonly PluginSidebarThread[],
 ): PluginSidebarThread[] {
-  return threads.filter((thread) => !thread.isArchived);
+  return threads.filter(
+    (thread) => !thread.isArchived && !thread.isHidden,
+  );
 }
 
 /** Pinned first (they are the user's own ordering), then the static sort. */

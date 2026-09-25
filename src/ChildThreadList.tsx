@@ -19,7 +19,9 @@ export function childrenOf(
   return threads
     .filter(
       (thread) =>
-        !thread.isArchived && thread.parentThreadId === parentThreadId,
+        !thread.isArchived &&
+        !thread.isHidden &&
+        thread.parentThreadId === parentThreadId,
     )
     .sort((left, right) => left.createdAt - right.createdAt);
 }
@@ -29,7 +31,8 @@ export function childThreadsByParent(
 ): ReadonlyMap<string, readonly PluginSidebarThread[]> {
   const result = new Map<string, PluginSidebarThread[]>();
   for (const thread of threads) {
-    if (thread.isArchived || !thread.parentThreadId) continue;
+    if (thread.isArchived || thread.isHidden || !thread.parentThreadId)
+      continue;
     const siblings = result.get(thread.parentThreadId) ?? [];
     siblings.push(thread);
     result.set(thread.parentThreadId, siblings);
@@ -44,7 +47,8 @@ export function childNeedsYouCount(
   threads: readonly PluginSidebarThread[],
 ): number {
   return threads.filter(
-    (thread) => !thread.isArchived && thread.hasPendingInteraction,
+    (thread) =>
+      !thread.isArchived && !thread.isHidden && thread.hasPendingInteraction,
   ).length;
 }
 

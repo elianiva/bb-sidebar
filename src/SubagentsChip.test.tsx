@@ -12,16 +12,22 @@ const childrenChip = app.threadHeaderActions.find(
 function thread(
   overrides: Partial<PluginSidebarThread> = {},
 ): PluginSidebarThread {
-  return {
+  const base: PluginSidebarThread = {
     id: "thr_1",
     projectId: "proj_1",
     title: "A thread",
     titleFallback: null,
+    displayTitle: "A thread",
     parentThreadId: null,
+    lifecycleOwnerThreadId: null,
+    sourceThreadId: null,
     sectionId: null,
     originKind: null,
     originPluginId: null,
     providerId: "codex",
+    status: "idle",
+    runtimeStatus: "idle",
+    queuedWork: "none",
     hasPendingInteraction: false,
     activity: {
       workflows: 0,
@@ -34,15 +40,22 @@ function thread(
     indicatorLabel: null,
     isUnread: false,
     isPinned: false,
+    pinnedAt: null,
+    pinSortKey: null,
     isArchived: false,
+    archivedAt: null,
+    href: "/projects/proj_1/threads/thr_1",
+    isHidden: false,
     environment: null,
     host: null,
     createdAt: 100,
     updatedAt: 100,
     lastReadAt: 100,
     latestAttentionAt: 100,
-    ...overrides,
   };
+  // Object.assign keeps the return exactly PluginSidebarThread: spreading a
+  // Partial would loosen every prop to `| undefined` and fail the annotation.
+  return Object.assign(base, overrides);
 }
 
 afterEach(cleanup);
@@ -70,7 +83,7 @@ describe("SubagentsChip", () => {
               createdAt: 102,
             }),
           ],
-          projects: [{ id: "proj_1", name: "bb", isPersonal: false }],
+          projects: [{ id: "proj_1", name: "bb", isPersonal: false, href: "/projects/proj_1", settingsHref: "/projects/proj_1/settings" }],
         },
       },
     );
@@ -113,7 +126,7 @@ describe("SubagentsChip", () => {
               createdAt: 102,
             }),
           ],
-          projects: [{ id: "proj_1", name: "bb", isPersonal: false }],
+          projects: [{ id: "proj_1", name: "bb", isPersonal: false, href: "/projects/proj_1", settingsHref: "/projects/proj_1/settings" }],
         },
       },
     );
@@ -161,7 +174,7 @@ describe("SubagentsChip", () => {
               parentThreadId: "child",
             }),
           ],
-          projects: [{ id: "proj_1", name: "bb", isPersonal: false }],
+          projects: [{ id: "proj_1", name: "bb", isPersonal: false, href: "/projects/proj_1", settingsHref: "/projects/proj_1/settings" }],
         },
       },
     );
@@ -220,7 +233,7 @@ describe("SubagentsChip", () => {
               parentThreadId: "parent",
             }),
           ],
-          projects: [{ id: "proj_1", name: "bb", isPersonal: false }],
+          projects: [{ id: "proj_1", name: "bb", isPersonal: false, href: "/projects/proj_1", settingsHref: "/projects/proj_1/settings" }],
         },
       },
     );

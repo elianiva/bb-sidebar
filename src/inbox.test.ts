@@ -23,16 +23,22 @@ import {
 function thread(
   overrides: Partial<PluginSidebarThread> = {},
 ): PluginSidebarThread {
-  return {
+  const base: PluginSidebarThread = {
     id: "thr_1",
     projectId: "proj_1",
     title: "A thread",
     titleFallback: null,
+    displayTitle: "A thread",
     parentThreadId: null,
+    lifecycleOwnerThreadId: null,
+    sourceThreadId: null,
     sectionId: null,
     originKind: null,
     originPluginId: null,
     providerId: "codex",
+    status: "idle",
+    runtimeStatus: "idle",
+    queuedWork: "none",
     hasPendingInteraction: false,
     activity: {
       workflows: 0,
@@ -45,15 +51,22 @@ function thread(
     indicatorLabel: null,
     isUnread: false,
     isPinned: false,
+    pinnedAt: null,
+    pinSortKey: null,
     isArchived: false,
+    archivedAt: null,
+    href: "/projects/proj_1/threads/thr_1",
+    isHidden: false,
     environment: null,
     host: null,
     createdAt: 100,
     updatedAt: 100,
     lastReadAt: 100,
     latestAttentionAt: 100,
-    ...overrides,
   };
+  // Object.assign keeps the return exactly PluginSidebarThread: spreading a
+  // Partial would loosen every prop to `| undefined` and fail the annotation.
+  return Object.assign(base, overrides);
 }
 
 describe("sortByCreatedAtDescending", () => {
@@ -186,6 +199,16 @@ describe("filtering", () => {
     expect(visibleInboxThreads(threads).map((t) => t.id)).toEqual(["a"]);
   });
 
+  // bb 0.43+ includes plugin-spawned helper threads (`visibility: "hidden"`)
+  // in the array; bb's own list filters them out, and so must this one.
+  it("excludes hidden helper threads", () => {
+    const threads = [
+      thread({ id: "a" }),
+      thread({ id: "helper", isHidden: true }),
+    ];
+    expect(visibleInboxThreads(threads).map((t) => t.id)).toEqual(["a"]);
+  });
+
   it("splits pinned from the rest, keeping order", () => {
     const { pinned, inbox } = partitionPinned([
       thread({ id: "a" }),
@@ -255,6 +278,31 @@ describe("child threads", () => {
         parentThreadId: "parent",
         hasPendingInteraction: true,
         isArchived: true,
+      }),
+    ];
+
+    expect(childrenOf(threads, "parent").map((thread) => thread.id)).toEqual([
+      "visible",
+    ]);
+    expect(
+      childThreadsByParent(threads).get("parent")?.map((thread) => thread.id),
+    ).toEqual(["visible"]);
+    expect(childNeedsYouCount(threads)).toBe(1);
+  });
+
+  it("excludes hidden helper threads from child helpers", () => {
+    const threads = [
+      thread({ id: "parent" }),
+      thread({
+        id: "visible",
+        parentThreadId: "parent",
+        hasPendingInteraction: true,
+      }),
+      thread({
+        id: "helper",
+        parentThreadId: "parent",
+        hasPendingInteraction: true,
+        isHidden: true,
       }),
     ];
 
