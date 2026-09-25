@@ -9,34 +9,36 @@ afterEach(() => {
 });
 
 describe("BrailleSpinner", () => {
-  it("draws a 2x4 pixel grid at the requested height", () => {
-    const { container } = render(<BrailleSpinner size={15} />);
+  it("draws a 2x3 pixel grid at the requested height", () => {
+    const { container } = render(<BrailleSpinner size={14} />);
     const svg = container.querySelector("[data-braille-spinner]");
-    expect(svg?.getAttribute("height")).toBe("15");
-    expect(svg?.getAttribute("viewBox")).toBe("0 0 7 15");
-    expect(svg?.querySelectorAll("rect")).toHaveLength(8);
+    expect(svg?.getAttribute("height")).toBe("14");
+    expect(svg?.getAttribute("viewBox")).toBe("0 0 7 11");
+    expect(svg?.querySelectorAll("rect")).toHaveLength(6);
   });
 
   it("steps every square through the ten braille frames", () => {
     const { container } = render(<BrailleSpinner />);
     const animations = [...container.querySelectorAll("animate")];
-    expect(animations).toHaveLength(8);
+    expect(animations).toHaveLength(6);
     for (const node of animations) {
       expect(node.getAttribute("calcMode")).toBe("discrete");
-      expect(node.getAttribute("dur")).toBe("0.64s");
+      expect(node.getAttribute("dur")).toBe("0.8s");
       // One opacity step per frame.
-      expect(node.getAttribute("values")?.split(";")).toHaveLength(8);
+      expect(node.getAttribute("values")?.split(";")).toHaveLength(10);
     }
-    // The top-left square is filled in the first frame (⠉) and the last
-    // (⠃): the schedule actually walks the perimeter sequence.
+    // The top-left square is filled in the first frame (⠋) and empty in
+    // the fourth (⠸): the schedule actually walks the classic sequence.
     expect(animations[0]?.getAttribute("values")?.split(";")).toEqual([
+      "1",
+      "1",
       "1",
       "0.15",
       "0.15",
       "0.15",
       "0.15",
-      "0.15",
-      "0.15",
+      "1",
+      "1",
       "1",
     ]);
     // Every square lights up at least once: no dead cells.
@@ -53,7 +55,7 @@ describe("BrailleSpinner", () => {
   it("renders the first frame statically under reduced motion", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
     const { container } = render(<BrailleSpinner />);
-    expect(container.querySelectorAll("rect")).toHaveLength(8);
+    expect(container.querySelectorAll("rect")).toHaveLength(6);
     expect(container.querySelectorAll("animate")).toHaveLength(0);
   });
 });

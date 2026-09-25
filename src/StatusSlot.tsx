@@ -46,7 +46,10 @@ export function StatusOrTime({
       // matching. The spinner is aria-hidden; the label owns the name.
       <>
         {status.animated ? (
-          <BrailleSpinner size={14} className="mr-1" />
+          <BrailleSpinner
+            size={14}
+            className={cn("mr-1", status.className)}
+          />
         ) : null}
         <span
           aria-label={thread.indicatorLabel ?? status.label}

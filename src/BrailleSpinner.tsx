@@ -1,15 +1,14 @@
 import { cn } from "./lib/utils";
 
 /**
- * A terminal-style braille spinner (`⠉⠘⠰⢠⣀⡄⠆⠃`), drawn as pixel
+ * A terminal-style braille spinner (`⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏`), drawn as pixel
  * squares in proper SVG instead of text.
  *
- * Each braille cell is a 2×4 dot grid; the eight frames walk one lit pair
- * around its perimeter, which reads as rotation — and every square lights
- * up, unlike the classic ten-frame sequence that never touches the bottom
- * row. Squares instead of circles keep the pixelated feel, and vector
- * shapes stay crisp at any size — text glyphs depend on whatever braille
- * coverage the system font happens to have.
+ * The classic sequence only ever touches the top three rows, so the grid
+ * is exactly that: 2×3, every square animating, no dead cells. Squares
+ * instead of circles keep the pixelated feel, and vector shapes stay
+ * crisp at any size — text glyphs depend on whatever braille coverage
+ * the system font happens to have.
  *
  * Frame cycling is SMIL (`<animate>` with discrete steps), so the motion is
  * self-contained in the element with no timers and no global CSS. `fill`
@@ -19,12 +18,12 @@ import { cn } from "./lib/utils";
  * animation elements. The whole figure is `aria-hidden`: it always pairs
  * with a text label that owns the accessible name.
  */
-const FRAMES = ["⠉", "⠘", "⠰", "⢠", "⣀", "⡄", "⠆", "⠃"];
+const FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 const FRAME_COUNT = FRAMES.length;
 const CYCLE_SECONDS = (FRAME_COUNT * 80) / 1000;
 
-// Braille bit i (0-7) is dot i+1. Dots 1-3 run down the left column, 4-6
-// down the right, 7-8 across the bottom row.
+// Braille bit i (0-5) is dot i+1. Dots 1-3 run down the left column,
+// 4-6 down the right — the whole grid, since the sequence never leaves it.
 const DOT_CELLS = [
   { col: 0, row: 0 },
   { col: 0, row: 1 },
@@ -32,14 +31,12 @@ const DOT_CELLS = [
   { col: 1, row: 0 },
   { col: 1, row: 1 },
   { col: 1, row: 2 },
-  { col: 0, row: 3 },
-  { col: 1, row: 3 },
 ];
 
 const SQUARE = 3;
 const GAP = 1;
 const CELL_WIDTH = 2 * SQUARE + GAP;
-const CELL_HEIGHT = 4 * SQUARE + 3 * GAP;
+const CELL_HEIGHT = 3 * SQUARE + 2 * GAP;
 
 function dotOn(frame: string, dotIndex: number): boolean {
   const code = (frame.codePointAt(0) ?? 0x2800) - 0x2800;
@@ -66,7 +63,7 @@ export function BrailleSpinner({
   size = 14,
   className,
 }: {
-  /** Rendered height in pixels; the width follows the 7:15 cell ratio. */
+  /** Rendered height in pixels; the width follows the 7:11 cell ratio. */
   size?: number;
   className?: string;
 }) {
