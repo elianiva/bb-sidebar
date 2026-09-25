@@ -23,24 +23,26 @@ describe("BrailleSpinner", () => {
     expect(animations).toHaveLength(8);
     for (const node of animations) {
       expect(node.getAttribute("calcMode")).toBe("discrete");
-      expect(node.getAttribute("dur")).toBe("0.8s");
+      expect(node.getAttribute("dur")).toBe("0.64s");
       // One opacity step per frame.
-      expect(node.getAttribute("values")?.split(";")).toHaveLength(10);
+      expect(node.getAttribute("values")?.split(";")).toHaveLength(8);
     }
-    // The top-left square is filled in the first frame (⠋) and empty in
-    // the fourth (⠸): the schedule actually walks the classic sequence.
+    // The top-left square is filled in the first frame (⠉) and the last
+    // (⠃): the schedule actually walks the perimeter sequence.
     expect(animations[0]?.getAttribute("values")?.split(";")).toEqual([
       "1",
-      "1",
-      "1",
       "0.15",
       "0.15",
       "0.15",
       "0.15",
-      "1",
-      "1",
+      "0.15",
+      "0.15",
       "1",
     ]);
+    // Every square lights up at least once: no dead cells.
+    for (const node of animations) {
+      expect(node.getAttribute("values")).toContain("1");
+    }
   });
 
   it("hides the animation from assistive technology", () => {

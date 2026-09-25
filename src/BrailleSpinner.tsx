@@ -1,13 +1,15 @@
 import { cn } from "./lib/utils";
 
 /**
- * The classic terminal braille spinner (`⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏`), drawn as
- * pixel squares in proper SVG instead of text.
+ * A terminal-style braille spinner (`⠉⠘⠰⢠⣀⡄⠆⠃`), drawn as pixel
+ * squares in proper SVG instead of text.
  *
- * Each braille cell is a 2×4 dot grid; the ten frames walk the filled dots
- * around it, which reads as rotation. Squares instead of circles keep the
- * pixelated feel, and vector shapes stay crisp at any size — text glyphs
- * depend on whatever braille coverage the system font happens to have.
+ * Each braille cell is a 2×4 dot grid; the eight frames walk one lit pair
+ * around its perimeter, which reads as rotation — and every square lights
+ * up, unlike the classic ten-frame sequence that never touches the bottom
+ * row. Squares instead of circles keep the pixelated feel, and vector
+ * shapes stay crisp at any size — text glyphs depend on whatever braille
+ * coverage the system font happens to have.
  *
  * Frame cycling is SMIL (`<animate>` with discrete steps), so the motion is
  * self-contained in the element with no timers and no global CSS. `fill`
@@ -17,7 +19,7 @@ import { cn } from "./lib/utils";
  * animation elements. The whole figure is `aria-hidden`: it always pairs
  * with a text label that owns the accessible name.
  */
-const FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+const FRAMES = ["⠉", "⠘", "⠰", "⢠", "⣀", "⡄", "⠆", "⠃"];
 const FRAME_COUNT = FRAMES.length;
 const CYCLE_SECONDS = (FRAME_COUNT * 80) / 1000;
 
