@@ -3198,7 +3198,7 @@ describe("card metadata", () => {
     expect(screen.queryByText("3h")).toBeNull();
   });
 
-  it("pairs live status labels with a dot spinner, idle rows with none", async () => {
+  it("pairs live status labels with a braille spinner, idle rows with none", async () => {
     const view = render([
       thread({
         id: "thr_run",
@@ -3211,7 +3211,7 @@ describe("card metadata", () => {
     // The spinner sits beside the label, which keeps its exact text.
     expect(screen.getByText("Working")).toBeDefined();
     expect(
-      view.container.querySelectorAll("[data-dot-spinner]"),
+      view.container.querySelectorAll("[data-braille-spinner]"),
     ).toHaveLength(1);
   });
 

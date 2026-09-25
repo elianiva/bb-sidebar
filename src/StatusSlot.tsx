@@ -3,7 +3,7 @@ import type {
   PluginSidebarThreadIndicator,
 } from "@get-bb/plugin-sdk/app";
 import { cn } from "./lib/utils";
-import { DotSpinner } from "./DotSpinner";
+import { BrailleSpinner } from "./BrailleSpinner";
 import { relativeTimeLabel } from "./relative-time";
 
 /**
@@ -46,7 +46,7 @@ export function StatusOrTime({
       // matching. The spinner is aria-hidden; the label owns the name.
       <>
         {status.animated ? (
-          <DotSpinner size={14} className="mr-1" />
+          <BrailleSpinner size={14} className="mr-1" />
         ) : null}
         <span
           aria-label={thread.indicatorLabel ?? status.label}
@@ -70,7 +70,7 @@ export function StatusOrTime({
 function shortStatus(indicator: PluginSidebarThreadIndicator): {
   label: string;
   className: string;
-  /** Live work gets the dot-ring spinner beside its label. */
+  /** Live work gets the braille-square spinner beside its label. */
   animated: boolean;
 } | null {
   switch (indicator) {
